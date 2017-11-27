@@ -11,4 +11,8 @@ public interface CodigoAccesoDAO {
 	public List<Object[]> listaCodigosAcceso();
 
 	public void listaCodigosDesincriptados();
+
+	public CodigoAcceso obtener(int codCod);
+
+	public void borrar(CodigoAcceso codObtenido);
 }

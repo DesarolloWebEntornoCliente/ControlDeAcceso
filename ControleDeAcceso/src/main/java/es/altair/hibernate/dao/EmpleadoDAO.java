@@ -16,6 +16,6 @@ public interface EmpleadoDAO {
 
 	public void listaGeneralDeEmpleados();
 
-	public void borrar(int codEmp);
+	public void borrar(Empleado empObtenido);
 
 }

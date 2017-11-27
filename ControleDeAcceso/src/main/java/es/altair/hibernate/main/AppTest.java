@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
+import org.hibernate.Session;
+
 import es.altair.hibernate.bean.AccesoEmpleados;
 import es.altair.hibernate.bean.CodigoAcceso;
 import es.altair.hibernate.bean.Departamento;
@@ -14,6 +16,7 @@ import es.altair.hibernate.dao.AccesoEmpleadoDAO;
 import es.altair.hibernate.dao.AccesoEmpleadosDAOImplHIbernate;
 import es.altair.hibernate.dao.CodigoAccesoDAO;
 import es.altair.hibernate.dao.CodigoAccesoDAOImplHIbernate;
+import es.altair.hibernate.dao.Conexion;
 import es.altair.hibernate.dao.DepartamentoDAO;
 import es.altair.hibernate.dao.DepartamentoDAOImplHIbernate;
 import es.altair.hibernate.dao.EmpleadoDAO;
@@ -57,29 +60,51 @@ public class AppTest{
 	 		 					System.out.println("Introduzca Descripción del Nivel de Acceso: ");
 	 		 					String nivel = tecladoLine.nextLine();
 	 		 					
-	 		 					 String key = "92AE31A79FEEB2A3"; //llave
-	 		 					 String iv = "0123456789ABCDEF"; // vector de inicialización
+	 		 					String key = "92AE31A79FEEB2A3"; //llave
+	 		 					String iv = "0123456789ABCDEF"; // vector de inicialización
 	 		 					
-	 		 					try {
-	 		 						
-	 								CodigoAcceso c1 = new CodigoAcceso(Encriptaciones.encrypt(key, iv, nombreEncripta.trim()), nivel);
-	 								
-	 		 						cDAO.save(c1);
-
-	 		 						System.out.println("Codigo Añadido con Exito");
-
-	 							} catch (Exception e2) {
-	 								
-	 								
-	 								System.out.println("El nombre no se ha encriptado, el codigo NO ha sido añadido");
-	 							}
-
+		 		 					try {
+		 		 						
+		 								CodigoAcceso c1 = new CodigoAcceso(Encriptaciones.encrypt(key, iv, nombreEncripta.trim()), nivel);
+		 								
+		 		 						cDAO.save(c1);
+	
+		 		 						System.out.println("Codigo Añadido con Exito");
+	
+		 							} catch (Exception e2) {
+		 										 								
+		 								System.out.println("El nombre no se ha encriptado, el codigo NO ha sido añadido");
+		 							}
 	 		
-	 		 					break;
+		 		 				break;
 	 		 					
 	 		 				case 2:
 	 		 					break;
-	 		 				case 3:
+	 		 				case 3: // Borrar Codigo de Acceso
+	 		 					
+	 		 					listaCodigosAcceso();
+	 		 					
+	 		 					System.out.println("\n\tIntroduzca el Código: ");
+	 		 					int codCod = sc.nextInt();
+	 		 					
+	 		 					try {
+	 		 						
+	 			 					CodigoAcceso codObtenido = cDAO.obtener(codCod);
+
+	 			 					System.out.println("¿Está Seguro que lo quieres Borrar (S/N)? ");
+	 			 					String respuesta = sc.next();
+	 			 					
+	 			 					if(respuesta.trim().equalsIgnoreCase("S")) 
+	 			 					{
+	 			 						cDAO.borrar(codObtenido);
+	 			 						
+	 			 						System.out.println("\n\tDepartamento Borrado con Exito\n");
+	 			 					}
+
+	 							} catch (Exception e) {
+	 								System.out.println("No se ha podido acceder al Codigo de Acceso Solicitado");
+	 							}
+	 		 					
 	 		 					break;
 	 		 				case 4: // Asignar Acceso a un empleado //
 	 		 					
@@ -225,10 +250,93 @@ public class AppTest{
 	 					break;
 	 					
 	 				case 4: // Actualizar Departamento
+	 					
+	 					listaDepartamentos();
+	 					
+	 					System.out.println("\n\tIntroduzca el Código del Departamento: ");
+	 					int codDep1 = sc.nextInt();
+	 					Departamento depObtenido2 = null;
+	 					try {
+	 						
+		 					depObtenido2 = depDAO.obtener(codDep1);
+		 					
+		 					String nombreDeptoAct = depObtenido2.getDescripcion();
+		 					
+		 					System.out.println("\tNombre Obtenido: " + nombreDeptoAct + "  " + depObtenido2.getIdDepartamento());
+		 					
+		 					System.out.println("Instroduzca el Nombre del Departamento: ");
+		 					nombreDeptoAct = tecladoLine.nextLine();
+		 					
+		 					listaCodigosAcceso();
+		 					
+		 					System.out.println("\n\tIntroduzca Código de Acceso para ese Departamento: ");
+		 					int codProvAct = sc.nextInt();
+		 					
+		 					System.out.println("¿Está Seguro que quieres Actualizar los Datos (S/N)? ");
+		 					String respuesta2 = sc.next();
+		 					respuesta2 = respuesta2.toUpperCase();
+		 					
+		 					if(respuesta2.trim().equalsIgnoreCase("S")) 
+		 					{
+		 						try {
+		 							CodigoAcceso c2 = new CodigoAcceso(codProvAct,"");
+					 					
+				 					Session sesion = Conexion.abrirConexion();
+				 							 					
+				 					depObtenido2.setDescripcion(nombreDeptoAct);
+				 					depObtenido2.setCodigoacceso(c2);
+				 					
+				 					sesion.update(depObtenido2);
+				 					
+				 					sesion.getTransaction().commit();
+				 							
+				 					Conexion.desconectar(sesion);
+			 						
+			 						System.out.println("\n\tDepartamento Actualizado con Exito\n");
+			 						
+								} catch (Exception e) {
+									System.out.println("No se ha podido Actualizar el Departamento");
+								}
+
+		 					}	 					
+				 					//	depDAO.actualizarConStrings(codProvAct,nombreDeptoAct);
+				 					//	depDAO.actualizar(depObtenido2);
+
+						} catch (Exception e) {
+							System.out.println("No se ha podido Obtener el Departamento");
+
+						}
+	
 		 					break;
 	 				case 5: // Actualizar Empleado
 		 					break;
 	 				case 6: //BOrrar Departamrnto
+	 					
+	 					listaDepartamentos();
+	 					
+	 					System.out.println("\n\tIntroduzca el Código del Departamento: ");
+	 					int codDep = sc.nextInt();
+	 					
+	 					try {
+	 						
+		 					Departamento depObtenido = depDAO.obtener(codDep);
+
+		 					System.out.println("¿Está Seguro que lo quieres Borrar (S/N)? ");
+		 					String respuesta = sc.next();
+		 					
+		 					respuesta = respuesta.toUpperCase();
+		 					
+		 					if(respuesta.trim().equalsIgnoreCase("S")) 
+		 					{
+		 						depDAO.borrar(depObtenido);
+		 						
+		 						System.out.println("\n\tDepartamento Borrado con Exito\n");
+		 					}
+
+						} catch (Exception e) {
+							System.out.println("No se ha podido acceder al Departamento Solicitado");
+						}
+	 					
 		 					break;
 	 				case 7: // Borrar Empleado
 	 					
@@ -241,8 +349,15 @@ public class AppTest{
 	 						
 		 					Empleado empObtenido = empDAO.obtener(codEmp);
 
-		 					System.out.println(empObtenido.getIdEmpleado() + "  " + empObtenido.getNombre());
-		 					empDAO.borrar(codEmp);
+		 					System.out.println("¿Está Seguro que lo quieres Borrar (S/N)? ");
+		 					String respuesta = sc.next();
+		 					
+		 					if(respuesta.trim().equalsIgnoreCase("S")) 
+		 					{
+		 						empDAO.borrar(empObtenido);
+		 						
+		 						System.out.println("\n\tEmpleado Borrado con Exito\n");
+		 					}
 
 						} catch (Exception e) {
 							System.out.println("No se ha podido acceder al Registro del Empleado");
@@ -335,10 +450,6 @@ public class AppTest{
 		}
 	}
 		
-//		for (int i = 0; i < codigos.size(); i++) {
-//			System.out.println("\t" + codigos.get(i));
-//		}
-	
 
 	private static void listaDepartamentos() {
 		List<Object[]> departs = depDAO.listaDepartamentos();

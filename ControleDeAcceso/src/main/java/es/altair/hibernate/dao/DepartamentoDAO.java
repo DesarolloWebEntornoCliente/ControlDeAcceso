@@ -16,4 +16,8 @@ public interface DepartamentoDAO {
 
 	public void listaGeneraldeDepartamentos();
 
+	public void borrar(Departamento depObtenido);
+
+
+
 }

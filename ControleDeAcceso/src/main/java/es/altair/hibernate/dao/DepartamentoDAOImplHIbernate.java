@@ -6,6 +6,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import es.altair.hibernate.bean.CodigoAcceso;
 import es.altair.hibernate.bean.Departamento;
 import es.altair.hibernate.bean.Empleado;
 
@@ -121,6 +122,17 @@ public class DepartamentoDAOImplHIbernate implements DepartamentoDAO {
 			sesion.getTransaction().commit();
 					
 		Conexion.desconectar(sesion);
+		
+	}
+
+	public void borrar(Departamento depBorrar) {
+		Session sesion = Conexion.abrirConexion();
+		
+		sesion.delete(depBorrar);
+		
+		sesion.getTransaction().commit();
+				
+	Conexion.desconectar(sesion);
 		
 	}
 

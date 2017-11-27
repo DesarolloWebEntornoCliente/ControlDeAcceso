@@ -6,6 +6,7 @@ import java.util.List;
 import org.hibernate.Session;
 
 import es.altair.hibernate.bean.CodigoAcceso;
+import es.altair.hibernate.bean.Departamento;
 import es.altair.hibernate.utilitarios.Encriptaciones;
 
 public class CodigoAccesoDAOImplHIbernate implements CodigoAccesoDAO {
@@ -67,8 +68,32 @@ public class CodigoAccesoDAOImplHIbernate implements CodigoAccesoDAO {
 			sesion.getTransaction().commit();
 					
 		Conexion.desconectar(sesion);
+					 		
+	}
+
+	public CodigoAcceso obtener(int codCod) {
 		
-			 
+		CodigoAcceso codigo = null;
+		
+		Session sesion = Conexion.abrirConexion();
+		
+		codigo = (CodigoAcceso)sesion.createQuery("select e from codigosacceso e where idCodigoAcceso=:id").setParameter("id", codCod).uniqueResult();
+		
+			sesion.getTransaction().commit();
+					
+		Conexion.desconectar(sesion);
+		
+		return codigo;
+	}
+
+	public void borrar(CodigoAcceso codBorrar) {
+	Session sesion = Conexion.abrirConexion();
+		
+		sesion.delete(codBorrar);
+		
+		sesion.getTransaction().commit();
+				
+	Conexion.desconectar(sesion);
 		
 	}
 

@@ -115,11 +115,11 @@ public class EmpleadoDAOImplHIbernate implements EmpleadoDAO {
 		
 	}
 
-	public void borrar(int codEmp) {
+	public void borrar(Empleado empBorrar) {
 		
 	Session sesion = Conexion.abrirConexion();
-			
-			sesion.delete(codEmp);
+		
+			sesion.delete(empBorrar);
 			
 			sesion.getTransaction().commit();
 					

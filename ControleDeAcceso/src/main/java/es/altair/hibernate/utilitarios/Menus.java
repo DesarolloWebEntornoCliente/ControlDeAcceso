@@ -65,6 +65,8 @@ public class Menus {
 		System.out.println("║ 4) Empleados con Accesos que Posee       ║");		
 		System.out.println("║                                          ║");		
 		System.out.println("║ 5) Listar Códigos Desincriptados         ║");		
+		System.out.println("║                                          ║");		
+		System.out.println("║ 6) Lista Empleados Efetivos/Contratados  ║");	
 		System.out.println("║__________________________________________║");
 		System.out.println("║                0) Retorna                ║");
 		System.out.println("╚══════════════════════════════════════════╝");
